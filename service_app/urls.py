@@ -1,13 +1,10 @@
-from django.urls import path, include
-from rest_framework.routers import SimpleRouter
+from django.urls import path
+from django.conf.urls import url
 
-from .views import DocumentUploadView, DocumentViewset
+from .views import DocumentUploadView, view_document
 
-router = SimpleRouter()
-router.register("documents", DocumentViewset)
 
 urlpatterns = [
-    path('upload', DocumentUploadView.as_view()),
+    path('document', DocumentUploadView.as_view()),
+    path(r"document/^(?P<pk>\d+)$", view_document),
 ]
-
-urlpatterns += router.urls
