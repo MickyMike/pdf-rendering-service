@@ -2,5 +2,5 @@ Django>=3.0,<4.0
 psycopg2-binary>=2.8
 djangorestframework>=3.12.4
 dramatiq[rabbitmq, watch]>=1.11.0
-django-dramatiq=0.10.0
+django-dramatiq>=0.10.0
 pdf2image>=1.16.0

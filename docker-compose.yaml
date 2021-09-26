@@ -2,7 +2,7 @@ version: "3.9"
    
 services:
   rabbitmq:
-    image: rabbitmq:3-management-alpine
+    image: rabbitmq:latest
     container_name: 'rabbitmq'
     ports:
       - 5672:5672
@@ -10,10 +10,9 @@ services:
     volumes:
       - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
       - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
-    networks:
-      - rabbitmq_go_net
   db:
     image: postgres
+    container_name: 'db'
     volumes:
       - ./data/db:/var/lib/postgresql/data
     environment:
@@ -21,6 +20,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
   web:
+    container_name: 'web_api'
     build: .
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
@@ -30,6 +30,11 @@ services:
     depends_on:
       - db
       - rabbitmq
-networks:
-  rabbitmq_go_net:
-    driver: bridge
+  worker:
+    build:
+      context: .
+    container_name: 'dramatiq'
+    command: python manage.py rundramatiq
+    depends_on:
+      - db
+      - rabbitmq

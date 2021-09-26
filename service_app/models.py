@@ -2,6 +2,8 @@ from datetime import datetime
 
 from django.db import models
 
+from pdf_rendering_service.settings import MEDIA_URL
+
 
 class Document(models.Model):
     class Status(models.TextChoices):
@@ -12,6 +14,10 @@ class Document(models.Model):
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.PROCESSING)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    @property
+    def filename(self):
+        return f"{MEDIA_URL}{self.file}"
 
 
 class Page(models.Model):

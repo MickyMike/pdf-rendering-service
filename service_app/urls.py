@@ -1,10 +1,8 @@
 from django.urls import path
-from django.conf.urls import url
 
-from .views import DocumentUploadView, view_document
+from .views import DocumentUploadView
 
 
 urlpatterns = [
-    path('document', DocumentUploadView.as_view()),
-    path(r"document/^(?P<pk>\d+)$", view_document),
+    path('documents/', DocumentUploadView.as_view()),
 ]
