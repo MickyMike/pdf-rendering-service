@@ -35,6 +35,11 @@ services:
       context: .
     container_name: 'dramatiq'
     command: python manage.py rundramatiq
+    volumes:
+      - .:/code
     depends_on:
       - db
       - rabbitmq
+
+volumes:
+  .:

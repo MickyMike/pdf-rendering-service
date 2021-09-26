@@ -1,5 +1,3 @@
-import tempfile
-
 import dramatiq
 from pdf2image import convert_from_bytes
 
@@ -15,8 +13,8 @@ def render_images(pk):
         with open(document.filename, "rb") as f:
             images = convert_from_bytes(f.read(), size=(1200, 1600))
         for i, image in enumerate(images):
-            path = f"{MEDIA_URL[1:]}images/{pk}_{str(i+1)}.png"
-            image.save(path, 'PNG')
+            path = f"images/{pk}_{str(i+1)}.png"
+            image.save(f"{MEDIA_URL[1:]}{path}", 'PNG')
             page = Page(document=document, page_num=i+1, page_img=path)
             page.save()
 
