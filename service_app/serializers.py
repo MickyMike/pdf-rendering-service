@@ -13,4 +13,4 @@ class PageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Page
-        fields = ['pk', 'document_id', 'page_num', 'page_img']
+        fields = ['document', 'page_num', 'page_img']

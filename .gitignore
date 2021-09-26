@@ -2,3 +2,4 @@
 *.log
 data/*
 *__pycache__*
+media/*
