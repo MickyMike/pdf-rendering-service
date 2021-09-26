@@ -1,12 +1,12 @@
-from django.http.response import JsonResponse
+from django.http.response import JsonResponse, FileResponse
+from django.http import Http404
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
-from rest_framework import viewsets, parsers
-from rest_framework.decorators import api_view
+from rest_framework import parsers
 
-from .models import Document
-from .serializers import DocumentSerializer
+from .models import Document, Page
+from .serializers import DocumentSerializer, PageSerializer
 from .tasks import render_images
 
 
@@ -14,7 +14,7 @@ class DocumentUploadView(generics.GenericAPIView):
     parser_classes = [parsers.MultiPartParser, parsers.FormParser]
     serializer_class = DocumentSerializer
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         serializer = DocumentSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             document = serializer.save()
@@ -29,18 +29,17 @@ class DocumentView(generics.GenericAPIView):
     def get(self, request, pk):
         try:
             document = Document.objects.get(pk=pk)
-            serializer = DocumentSerializer(document)
-            return JsonResponse(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            print(e)
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return JsonResponse({"status": document.status, "n_pages": document.pages}, status=status.HTTP_200_OK)
+        except Document.DoesNotExist:
+            raise Http404("Document does not exist")
 
 
-@api_view(['GET'])
-def view_document(request, pk):
-    try:
-        document = Document.objects.get(pk=pk)
-        serializer = DocumentSerializer(document)
-        return JsonResponse(serializer.data, status=status.HTTP_200_OK)
-    except Document.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+class PageView(generics.GenericAPIView):
+
+    def get(self, request, pk, num):
+        try:
+            page = Page.objects.get(page_num=num, document=pk).page_img
+            serializer = PageSerializer(page)
+            return FileResponse(page, content_type='image/png')
+        except Page.DoesNotExist:
+            raise Http404("Page does not exist")

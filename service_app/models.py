@@ -7,8 +7,8 @@ from pdf_rendering_service.settings import MEDIA_URL
 
 class Document(models.Model):
     class Status(models.TextChoices):
-        PROCESSING = '1', "processing"
-        DONE = '2', "done"
+        PROCESSING = "processing", '1'
+        DONE = "done", '2'
 
     file = models.FileField(max_length=60, upload_to="documents")
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.PROCESSING)
