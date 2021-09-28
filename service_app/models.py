@@ -9,7 +9,7 @@ class Document(models.Model):
         PROCESSING = "processing", '1'
         DONE = "done", '2'
 
-    file = models.FileField(max_length=60, upload_to="documents", validators=[FileExtensionValidator(["pdf"])])
+    pdf_file = models.FileField(max_length=60, upload_to="documents", validators=[FileExtensionValidator(["pdf"])])
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.PROCESSING)
     pages = models.IntegerField(default=None, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -20,7 +20,7 @@ class Document(models.Model):
 
     @property
     def filename(self):
-        return f"{MEDIA_URL[1:]}{self.file}"
+        return f"{MEDIA_URL[1:]}{self.pdf_file}"
 
 
 class Page(models.Model):

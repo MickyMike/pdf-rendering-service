@@ -5,7 +5,7 @@ from .models import Document, Page
 class DocumentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Document
-        fields = ['id', 'file']
+        fields = ['id', 'pdf_file']
         read_only_fields = ["status"]
 
 
