@@ -1,6 +1,5 @@
-from datetime import datetime
-
 from django.db import models
+from django.core.validators import FileExtensionValidator
 
 from pdf_rendering_service.settings import MEDIA_URL
 
@@ -10,7 +9,7 @@ class Document(models.Model):
         PROCESSING = "processing", '1'
         DONE = "done", '2'
 
-    file = models.FileField(max_length=60, upload_to="documents")
+    file = models.FileField(max_length=60, upload_to="documents", validators=[FileExtensionValidator(["pdf"])])
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.PROCESSING)
     pages = models.IntegerField(default=None, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
