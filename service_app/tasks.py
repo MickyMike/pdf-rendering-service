@@ -11,7 +11,7 @@ from pdf_rendering_service.settings import MEDIA_URL
 @dramatiq.actor
 def render_images(pk):
     document = Document.objects.get(pk=pk)
-    os.makedirs(IMG_FOLDER, exist_ok=True)
+    os.makedirs(f"{IMG_FOLDER}/{IMG_FOLDER}", exist_ok=True)
 
     try:
         with open(document.filename, "rb") as f:
