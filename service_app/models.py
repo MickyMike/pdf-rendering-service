@@ -4,6 +4,7 @@ from django.dispatch import receiver
 from django.core.validators import FileExtensionValidator
 
 from pdf_rendering_service.settings import MEDIA_URL
+from .constants import PDF_FOLDER, IMG_FOLDER
 
 
 class Document(models.Model):
@@ -11,7 +12,7 @@ class Document(models.Model):
         PROCESSING = "processing", '1'
         DONE = "done", '2'
 
-    pdf_file = models.FileField(max_length=60, upload_to="documents", validators=[FileExtensionValidator(["pdf"])])
+    pdf_file = models.FileField(max_length=60, upload_to=PDF_FOLDER, validators=[FileExtensionValidator(["pdf"])])
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.PROCESSING)
     pages = models.IntegerField(default=None, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -28,7 +29,7 @@ class Document(models.Model):
 class Page(models.Model):
     document = models.ForeignKey(Document, on_delete=models.CASCADE)
     page_num = models.IntegerField()
-    page_img = models.ImageField(upload_to="images")
+    page_img = models.ImageField(upload_to=IMG_FOLDER)
 
     def __str__(self):
         return f"{self.document}_{self.page_num}"
