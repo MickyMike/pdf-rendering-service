@@ -1,3 +1,5 @@
+import os
+
 import dramatiq
 from pdf2image import convert_from_bytes
 
@@ -8,6 +10,7 @@ from pdf_rendering_service.settings import MEDIA_URL
 @dramatiq.actor
 def render_images(pk):
     document = Document.objects.get(pk=pk)
+    os.makedirs("images", exist_ok=True)
 
     try:
         with open(document.filename, "rb") as f:
