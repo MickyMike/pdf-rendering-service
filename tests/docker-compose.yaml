@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  test-db:
+    image: postgres
+    container_name: "test_db"
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=pdf_rendering
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+  test-web:
+    container_name: "test_web_api"
+    build:
+      context: ..
+      dockerfile: tests/Dockerfile
+    command:  bash -c 'while !</dev/tcp/test_db/5432; do sleep 1; done; python3 manage.py test'
+    environment:
+      - DB_HOST_NAME=test_db
+      - POSTGRES_DB=pdf_rendering
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PORT=5432
+      - RABBIT_PORT=$RABBIT_PORT
+      - RABBIT_USER=${RABBIT_USER}
+      - RABBIT_PASSWORD=${RABBIT_PASSWORD}
+    depends_on:
+      - test-db

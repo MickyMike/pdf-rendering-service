@@ -20,8 +20,8 @@ def render_images(pk):
             images = convert_from_bytes(f.read(), size=(1200, 1600))
         for i, image in enumerate(images):
             path = f"{IMG_FOLDER}/{pk}_{str(i+1)}.png"
-            image.save(f"{MEDIA_URL[1:]}{path}", 'PNG')
-            page = Page(document=document, page_num=i+1, page_img=path)
+            image.save(f"{MEDIA_URL[1:]}{path}", "PNG")
+            page = Page(document=document, page_num=i + 1, page_img=path)
             page.save()
 
         document.status = Document.Status.DONE

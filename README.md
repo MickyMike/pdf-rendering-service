@@ -17,3 +17,8 @@ Service for rendering PNG images from PDF files
     - returns JSON { “status”: “processing|done”, “n_pages”: NUMBER }
 - GET /api/documents/<DOCUMENT_ID>/pages/<NUMBER>
     - returns rendered image png
+  
+## Tests
+
+- Run tests from `tests` folder with:
+    - `docker-compose up --build --exit-code-from test-web`

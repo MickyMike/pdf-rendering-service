@@ -1,3 +1,6 @@
 from django.test import TestCase
 
-# Create your tests here.
+
+class DocumentTest(TestCase):
+    def test_01(self):
+        assert False
