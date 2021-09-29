@@ -3,7 +3,7 @@ version: "3.9"
 services:
   rabbitmq:
     image: rabbitmq:latest
-    container_name: 'rabbitmq'
+    container_name: "rabbitmq"
     ports:
       - 5672:5672
       - 15672:15672
@@ -12,7 +12,7 @@ services:
       - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
   db:
     image: postgres
-    container_name: 'db'
+    container_name: "db"
     volumes:
       - ./data/db:/var/lib/postgresql/data
     environment:
@@ -20,20 +20,20 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
   web:
-    container_name: 'web_api'
+    container_name: "web_api"
     build: .
     command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/code
     ports:
-      - "8000:8000"
+      - 8000:8000
     depends_on:
       - db
       - rabbitmq
   worker:
     build:
       context: .
-    container_name: 'dramatiq'
+    container_name: "dramatiq"
     command: python manage.py rundramatiq
     volumes:
       - .:/code
