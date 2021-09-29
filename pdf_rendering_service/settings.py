@@ -28,7 +28,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_dramatiq",
     "rest_framework",
-    "service_app.apps.ServiceAppConfig",
+    "pdf_rendering_service.service_app",
 ]
 
 DRAMATIQ_BROKER = {
