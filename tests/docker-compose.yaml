@@ -15,7 +15,7 @@ services:
     build:
       context: ..
       dockerfile: tests/Dockerfile
-    command:  bash -c 'while !</dev/tcp/test_db/5432; do sleep 1; done; python manage.py test'
+    command:  python manage.py test
     environment:
       - DJANGO_SETTINGS_MODULE=tests.settings
       - DB_HOST_NAME=test_db
