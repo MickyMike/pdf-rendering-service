@@ -5,28 +5,46 @@ services:
     image: rabbitmq:latest
     container_name: "rabbitmq"
     ports:
-      - 5672:5672
-      - 15672:15672
+      - $RABBIT_PORT:$RABBIT_PORT
     volumes:
       - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
       - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+      - ./docker_conf/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBIT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBIT_PASSWORD}
   db:
     image: postgres
     container_name: "db"
+    command: -p $POSTGRES_PORT
     volumes:
       - ./data/db:/var/lib/postgresql/data
+    expose:
+      - $POSTGRES_PORT
+    ports:
+      - $POSTGRES_PORT:$POSTGRES_PORT
     environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=$POSTGRES_DB
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+      - POSTGRES_PORT=$POSTGRES_PORT
   web:
     container_name: "web_api"
     build: .
-    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    command: ./docker_conf/web_entrypoint.sh
     volumes:
       - .:/code
     ports:
       - 8000:8000
+    environment:
+      - DB_HOST_NAME=$DB_HOST_NAME
+      - POSTGRES_DB=$POSTGRES_DB
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+      - POSTGRES_PORT=$POSTGRES_PORT
+      - RABBIT_PORT=$RABBIT_PORT
+      - RABBIT_USER=${RABBIT_USER}
+      - RABBIT_PASSWORD=${RABBIT_PASSWORD}
     depends_on:
       - db
       - rabbitmq
@@ -34,9 +52,18 @@ services:
     build:
       context: .
     container_name: "dramatiq"
-    command: python manage.py rundramatiq
+    command: ./docker_conf/worker_entrypoint.sh
     volumes:
       - .:/code
+    environment:
+      - DB_HOST_NAME=$DB_HOST_NAME
+      - POSTGRES_DB=$POSTGRES_DB
+      - POSTGRES_USER=$POSTGRES_USER
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+      - POSTGRES_PORT=$POSTGRES_PORT
+      - RABBIT_PORT=$RABBIT_PORT
+      - RABBIT_USER=${RABBIT_USER}
+      - RABBIT_PASSWORD=${RABBIT_PASSWORD}
     depends_on:
       - db
       - rabbitmq
