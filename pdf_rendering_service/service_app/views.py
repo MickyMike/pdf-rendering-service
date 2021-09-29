@@ -22,14 +22,15 @@ class DocumentUploadView(generics.GenericAPIView):
 
 
 class DocumentView(generics.GenericAPIView):
-
     def get(self, request, pk):
         document = get_object_or_404(Document, pk=pk)
-        return JsonResponse({"status": document.status, "n_pages": document.pages}, status=status.HTTP_200_OK)
+        return JsonResponse(
+            {"status": document.status, "n_pages": document.pages},
+            status=status.HTTP_200_OK,
+        )
 
 
 class PageView(generics.GenericAPIView):
-
     def get(self, request, pk, num):
         page_img = get_object_or_404(Page, page_num=num, document=pk).page_img
-        return FileResponse(page_img, content_type='image/png')
+        return FileResponse(page_img, content_type="image/png")
