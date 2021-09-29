@@ -3,7 +3,7 @@
 set -e
 
 # wait for postgresql to start
-while !</dev/tcp/db/$POSTGRES_PORT; do
+while !</dev/tcp/db/${POSTGRES_PORT}; do
   sleep 5
 done
 

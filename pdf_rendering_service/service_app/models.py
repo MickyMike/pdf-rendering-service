@@ -2,8 +2,8 @@ from django.db import models
 from django.db.models.signals import post_delete, pre_save
 from django.dispatch import receiver
 from django.core.validators import FileExtensionValidator
+from django.conf import settings
 
-from pdf_rendering_service.settings import MEDIA_URL
 from .constants import PDF_FOLDER, IMG_FOLDER
 
 
@@ -29,7 +29,7 @@ class Document(models.Model):
 
     @property
     def filename(self):
-        return f"{MEDIA_URL[1:]}{self.pdf_file}"
+        return f"{settings.MEDIA_URL[1:]}{self.pdf_file}"
 
 
 class Page(models.Model):
