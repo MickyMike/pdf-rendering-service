@@ -1,6 +1,6 @@
 from unittest import mock
 
-from django.test import TestCase, Client, override_settings
+from django.test import TestCase, Client
 from django.core.files import File
 from PIL import Image, ImageChops
 
