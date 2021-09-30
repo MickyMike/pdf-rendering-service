@@ -1,6 +1,6 @@
 from unittest import mock
 
-from django.test import TestCase, Client, override_settings
+from django.test import TestCase, Client
 from django.core.files import File
 from PIL import Image, ImageChops
 
@@ -8,21 +8,28 @@ from .models import Document, Page
 from .tasks import render, render_images
 
 
+TEST_PDF = "tests/files/pdf_test.pdf"
+TEST_IMG = "tests/files/image_test.png"
+
+
 class DocumentTest(TestCase):
     def test_file_field(self):
         file_mock = mock.MagicMock(spec=File)
-        file_mock.name = 'test.pdf'
+        file_mock.name = 'pdf_test.pdf'
         file_model = Document(pdf_file=file_mock)
         self.assertEqual(file_model.pdf_file.name, file_mock.name)
+
+    def test_document(self):
+        document = Document(pdf_file=TEST_PDF, status=Document.Status.PROCESSING, pages=1)
+        document.save()
+        self.assertEqual(document.pdf_file.name, TEST_PDF)
 
 
 class ViewTest(TestCase):
     def setUp(self) -> None:
         self.client = Client()
-        self.document = Document(pdf_file="tests/files/pdf_test.pdf", status=Document.Status.PROCESSING, pages=1)
+        self.document = Document(pdf_file=TEST_PDF, status=Document.Status.PROCESSING, pages=1)
         self.document.save()
-        self.page = Page(page_img="tests/files/image_test.png", document=self.document, page_num=1)
-        self.page.save()
 
     def test_get_document_valid(self):
         response = self.client.get(f"/api/documents/{self.document.pk}/")
@@ -36,21 +43,21 @@ class ViewTest(TestCase):
 
 
 class RenderTaskTest(TestCase):
+    def setUp(self) -> None:
+        self.template_img = Image.open(TEST_IMG)
+        self.document = Document(pdf_file=TEST_PDF, status=Document.Status.PROCESSING, pages=1)
+        self.document.save()
+
     def assert_images_different(self, img1, img2):
         diff = ImageChops.difference(img1, img2)
         if diff.getbbox():
             raise AssertionError("Images are different")
 
     def test_render(self):
-        template_img = Image.open("tests/files/image_test.png")
-        rendered_img = render("tests/files/pdf_test.pdf")[0]
-        self.assert_images_different(template_img, rendered_img)
+        rendered_img = render(TEST_PDF)[0]
+        self.assert_images_different(self.template_img, rendered_img)
 
-    @override_settings(MEDIA_URL="/")
     def test_render_images(self):
-        document = Document(pdf_file="tests/files/pdf_test.pdf", status=Document.Status.PROCESSING, pages=1)
-        document.save()
-        render_images(document.pk)
-        rendered_img = Image.open("images/1_1.png")
-        template_img = Image.open("tests/files/image_test.png")
-        self.assert_images_different(template_img, rendered_img)
+        render_images(self.document.pk)
+        rendered_img = Image.open(Page.objects.get(pk=1).page_img)
+        self.assert_images_different(self.template_img, rendered_img)
