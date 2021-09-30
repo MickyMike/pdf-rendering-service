@@ -23,8 +23,6 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_PORT=5432
-      - RABBIT_PORT=${RABBIT_PORT}
-      - RABBIT_USER=${RABBIT_USER}
-      - RABBIT_PASSWORD=${RABBIT_PASSWORD}
+      - RABBIT_PORT=5672
     depends_on:
       - test-db
