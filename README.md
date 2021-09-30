@@ -19,6 +19,7 @@ Service for rendering PNG images from PDF files
     - returns rendered image png
   
 ## Tests
-
+  
+- Tests location `pdf_rendering_service/service_app/tests.py`
 - Run tests from `tests` folder with:
     - `docker-compose up --build --exit-code-from test-web`
